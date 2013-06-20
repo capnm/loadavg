@@ -49,6 +49,27 @@ func TestLoadAvg2(t *testing.T) {
 	}
 }
 
+func TestLoadAvg3(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("skipping linux test")
+	}
+
+	for i := 0; i < 3; i++ {
+		loadavg, pr, err := LoadAvg3()
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer Close() // nop
+		for _, l := range loadavg[:] {
+			if l < 0 {
+				t.Errorf("expected loadavg >= 0, got %v", l)
+			}
+		}
+		fmt.Printf("loadavg: %2.2f, %2.2f, %2.2f, %v\n", loadavg[MIN_1],
+			loadavg[MIN_5], loadavg[MIN_15], pr)
+	}
+}
+
 func ExampleLoadAvg() {
 	loadavg, err := LoadAvg()
 	if err != nil {

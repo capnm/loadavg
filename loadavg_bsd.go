@@ -19,7 +19,7 @@ type loadavg struct {
 func LoadAvg() ([3]float64, error) {
 	v, err := syscall.Sysctl(sysctl)
 	if err != nil {
-		return [...]float64{-1, -1, -1}, fmt.Errorf("loadavg: sysctl failed: %v", err)
+		return [3]float64{}, fmt.Errorf("LoadAvg: sysctl failed: %v", err)
 	}
 	b := []byte(v)
 	var l loadavg = *(*loadavg)(unsafe.Pointer(&b[0]))
@@ -36,10 +36,12 @@ func LoadAvg() ([3]float64, error) {
 	}, nil
 }
 
-// LoadAvg returns the traditional 1, 5, and 15 min load averages.
 func LoadAvg2() ([3]float64, [3]int, error) {
-	return [3]float64{}, [3]int{}, fmt.Errorf("loadavg: unsupported platform %q", runtime.GOOS)
+	return [3]float64{}, [3]int{}, fmt.Errorf("LoadAvg2: unsupported platform %q", runtime.GOOS)
 }
 
-// nop
-func Close() error { return nil }
+func LoadAvg3() ([3]float64, [3]int, error) {
+	return [3]float64{}, [3]int{}, fmt.Errorf("LoadAvg3: unsupported platform %q", runtime.GOOS)
+}
+
+func Close() {}
