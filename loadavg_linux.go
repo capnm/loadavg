@@ -50,7 +50,8 @@ func loadAvgProc() ([3]float64, [3]int, error) {
 	return loadavg, pr, nil
 }
 
-// LoadAvg returns the traditional 1, 5, and 15 min load averages.
+// LoadAvg returns the traditional 1, 5, and 15 min load averages, i.e.
+// processes that are actually running – averaged over the last 1, 5, and 15 minutes.
 func LoadAvg() ([3]float64, error) {
 	a, _, c := loadAvgSys()
 	return a, c

@@ -15,7 +15,8 @@ type loadavg struct {
 	scale uint64
 }
 
-// LoadAvg returns the traditional 1, 5, and 15 min load averages.
+// LoadAvg returns the traditional 1, 5, and 15 min load averages, i.e.
+// processes that are actually running – averaged over the last 1, 5, and 15 minutes.
 func LoadAvg() ([3]float64, error) {
 	v, err := syscall.Sysctl(sysctl)
 	if err != nil {

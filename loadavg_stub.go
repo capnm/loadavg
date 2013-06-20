@@ -7,7 +7,8 @@ import (
 	"runtime"
 )
 
-// LoadAvg returns the traditional 1, 5, and 15 min load averages.
+// LoadAvg returns the traditional 1, 5, and 15 min load averages, i.e.
+// processes that are actually running – averaged over the last 1, 5, and 15 minutes.
 func LoadAvg() ([3]float64, error) {
 	return [3]float64{}, fmt.Errorf("LoadAvg: unsupported platform %q", runtime.GOOS)
 }
