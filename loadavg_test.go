@@ -12,21 +12,27 @@ import (
 )
 
 func TestLoadAvg(t *testing.T) {
-	loadavg, err := LoadAvg()
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer Close()
-	for _, l := range loadavg[:] {
-		if l < 0 {
-			t.Errorf("expected loadavg >= 0, got %v", l)
+	for i := 0; i < 3; i++ {
+		loadavg, err := LoadAvg()
+		if err != nil {
+			t.Fatal(err)
 		}
+		defer Close()
+		for _, l := range loadavg[:] {
+			if l < 0 {
+				t.Errorf("expected loadavg >= 0, got %v", l)
+			}
+		}
+		fmt.Printf("loadavg: %2.2f, %2.2f, %2.2f\n", loadavg[MIN_1],
+			loadavg[MIN_5], loadavg[MIN_15])
 	}
-	fmt.Printf("loadavg: %2.2f, %2.2f, %2.2f\n", loadavg[MIN_1],
-		loadavg[MIN_5], loadavg[MIN_15])
 }
 
 func TestLoadAvg2(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("skipping linux test")
+	}
+
 	for i := 0; i < 3; i++ {
 		loadavg, pr, err := LoadAvg2()
 		if err != nil {
@@ -53,25 +59,32 @@ func ExampleLoadAvg() {
 }
 
 func TestLookPath(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("skipping linux test.")
+	}
+
 	path, err := exec.LookPath("sleep")
 	if err == nil {
 		fmt.Println("LookPath: sleep:", path)
 	} else {
-		fmt.Println("LookPath:", err)
+		t.Fatal("LookPath:", err)
 	}
 }
 
-
 func TestProcFileRead(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("skipping linux test.")
+	}
+
 	f, err := os.Open(procfile)
 	if err != nil {
-		t.Error("Open:", err)
+		t.Fatal("Open:", err)
 	}
 	defer f.Close()
 	for i := 0; i < 10; i++ {
 		b, err := ioutil.ReadAll(f)
 		if err != nil {
-			t.Error("ReadAll:", err)
+			t.Fatal("ReadAll:", err)
 		}
 		fmt.Print(string(b))
 
@@ -83,7 +96,7 @@ func TestProcFileRead(t *testing.T) {
 		time.Sleep(time.Second)
 		_, err = f.Seek(0, 0)
 		if err != nil {
-			t.Error("Seek:", err)
+			t.Fatal("Seek:", err)
 		}
 	}
 
@@ -92,11 +105,11 @@ func TestProcFileRead(t *testing.T) {
 
 	_, err = f.Seek(0, 0)
 	if err != nil {
-		t.Error("Seek:", err)
+		t.Fatal("Seek:", err)
 	}
 	b, err := ioutil.ReadAll(f)
 	if err != nil {
-		t.Error("ReadAll:", err)
+		t.Fatal("ReadAll:", err)
 	}
 	fmt.Print(string(b))
 
