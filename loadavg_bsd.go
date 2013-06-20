@@ -26,7 +26,7 @@ func LoadAvg() ([3]float64, error) {
 	var l loadavg = *(*loadavg)(unsafe.Pointer(&b[0]))
 
 	// BUG(dfc) syscall.Sysctl truncates the last byte (expecting a null terminated string)
-	// so we have no access to the last byte returned. However it looks like on 64bit kernels
+	// so we have no access to the last byte returned. However it looks like on 64 bit kernels
 	// this byte is padding, so it all works anyway.
 
 	scale := float64(l.scale)

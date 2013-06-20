@@ -75,7 +75,7 @@ func close() {
 //	– and the total number of processes on the system.
 // The final entry is the process ID of the process that most recently ran.
 //
-// TODO:?? int / 0 - runable tasks, 2 - last pid
+// TODO:?? int / 0 - runnable tasks, 2 - last pid
 //
 func loadAvgSys() ([3]float64, [3]int, error) {
 	/*
@@ -87,7 +87,7 @@ func loadAvgSys() ([3]float64, [3]int, error) {
 	   	Freeram   uint64	// Available memory size
 	   	Sharedram uint64	// Amount of shared memory
 	   	Bufferram uint64	// Memory used by buffers
-	   	Totalswap uint64	// Total swap space siz
+	   	Totalswap uint64	// Total swap space size
 	   	Freeswap  uint64	// swap space still available
 	   	Procs     uint16	// Number of current processes
 	   	Pad       uint16
@@ -112,6 +112,6 @@ func loadAvgSys() ([3]float64, [3]int, error) {
 			float64(si.Loads[1]) / scale,
 			float64(si.Loads[2]) / scale,
 		},
-		[3]int{-1, int(si.Procs), os.Getpid()}, // XXX:?? 0 - runable tasks, 2 - last pid
+		[3]int{-1, int(si.Procs), os.Getpid()}, // XXX:?? 0 - runnable tasks, 2 - last pid
 		nil
 }
