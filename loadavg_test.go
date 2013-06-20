@@ -179,6 +179,13 @@ BenchmarkLoadAvgSyscall			 1000000	      2254 ns/op
 BenchmarkLoadAvgProcFile		   50000	     35868 ns/op
 BenchmarkLoadAvgProcFileOpenClose	   50000	     43355 ns/op
 
+arm:
+BenchmarkLoadAvg		  500000	      6499 ns/op
+BenchmarkLoadAvgSyscall		  500000	      7365 ns/op
+BenchmarkLoadAvgProcFile	    5000	    330423 ns/op
+BenchmarkLoadAvgProcFileOpenClose   5000	    393486 ns/op
+
+
 */
 
 func BenchmarkLoadAvg(b *t.B) {
