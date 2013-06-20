@@ -7,65 +7,65 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
-	"testing"
+	t "testing"
 	"time"
 )
 
-func TestLoadAvg(t *testing.T) {
+func TestLoadAvg(t *t.T) {
 	for i := 0; i < 3; i++ {
 		loadavg, err := LoadAvg()
 		if err != nil {
 			t.Fatal(err)
 		}
-		defer Close()
+		defer close()
 		for _, l := range loadavg[:] {
 			if l < 0 {
 				t.Errorf("expected loadavg >= 0, got %v", l)
 			}
 		}
-		fmt.Printf("loadavg: %2.2f, %2.2f, %2.2f\n", loadavg[MIN_1],
+		fmt.Printf("LoadAvg:\t%2.2f, %2.2f, %2.2f\n", loadavg[MIN_1],
 			loadavg[MIN_5], loadavg[MIN_15])
 	}
 }
 
-func TestLoadAvg2(t *testing.T) {
+func TestLoadAvgProc(t *t.T) {
 	if runtime.GOOS != "linux" {
 		t.Skip("skipping linux test")
 	}
 
 	for i := 0; i < 3; i++ {
-		loadavg, pr, err := LoadAvg2()
+		loadavg, pr, err := loadAvgProc()
 		if err != nil {
 			t.Fatal(err)
 		}
-		defer Close()
+		defer close()
 		for _, l := range loadavg[:] {
 			if l < 0 {
 				t.Errorf("expected loadavg >= 0, got %v", l)
 			}
 		}
-		fmt.Printf("loadavg: %2.2f, %2.2f, %2.2f, %v\n", loadavg[MIN_1],
+		fmt.Printf("loadAvgProc:\t%2.2f, %2.2f, %2.2f, %v\n", loadavg[MIN_1],
 			loadavg[MIN_5], loadavg[MIN_15], pr)
 	}
 }
 
-func TestLoadAvg3(t *testing.T) {
+func TestLoadAvgSys(t *t.T) {
 	if runtime.GOOS != "linux" {
 		t.Skip("skipping linux test")
 	}
 
 	for i := 0; i < 3; i++ {
-		loadavg, pr, err := LoadAvg3()
+		loadavg, pr, err := loadAvgSys()
 		if err != nil {
 			t.Fatal(err)
 		}
-		defer Close() // nop
+		defer close() // nop
 		for _, l := range loadavg[:] {
 			if l < 0 {
 				t.Errorf("expected loadavg >= 0, got %v", l)
 			}
 		}
-		fmt.Printf("loadavg: %2.2f, %2.2f, %2.2f, %v\n", loadavg[MIN_1],
+		fmt.Printf("loadAvgSys:\t%2.2f, %2.2f, %2.2f, %v\n", loadavg[MIN_1],
 			loadavg[MIN_5], loadavg[MIN_15], pr)
 	}
 }
@@ -79,9 +79,10 @@ func ExampleLoadAvg() {
 		loadavg[MIN_15])
 }
 
-func TestLookPath(t *testing.T) {
+// sleep?
+func TestLookPath(t *t.T) {
 	if runtime.GOOS != "linux" {
-		t.Skip("skipping linux test.")
+		t.Skip("skipping linux test")
 	}
 
 	path, err := exec.LookPath("sleep")
@@ -92,9 +93,10 @@ func TestLookPath(t *testing.T) {
 	}
 }
 
-func TestProcFileRead(t *testing.T) {
+// stress test
+func TestProcFileRead(t *t.T) {
 	if runtime.GOOS != "linux" {
-		t.Skip("skipping linux test.")
+		t.Skip("skipping linux test")
 	}
 
 	f, err := os.Open(procfile)
@@ -121,7 +123,7 @@ func TestProcFileRead(t *testing.T) {
 		}
 	}
 
-	fmt.Println("wait...")
+	fmt.Println("TestProcFileRead: wait...")
 	time.Sleep(16 * time.Second)
 
 	_, err = f.Seek(0, 0)
@@ -132,22 +134,23 @@ func TestProcFileRead(t *testing.T) {
 	if err != nil {
 		t.Fatal("ReadAll:", err)
 	}
-	fmt.Print(string(b))
+	fmt.Println(string(b))
 
 }
 
-func TestLinuxSyscall(t *testing.T) {
+// stress test
+func TestLinuxSyscall(t *t.T) {
 	if runtime.GOOS != "linux" {
-		t.Skip("skipping linux test.")
+		t.Skip("skipping linux test")
 	}
 
 	for i := 0; i < 10; i++ {
-		loadavg, pr, err := LoadAvg3()
+		loadavg, pr, err := loadAvgSys()
 		if err != nil {
-			t.Fatal("LoadAvg3:", err)
+			t.Fatal("loadAvgSys:", err)
 		}
-		fmt.Printf("loadavg: %2.2f, %2.2f, %2.2f, %v\n", loadavg[MIN_1],
-			loadavg[MIN_5], loadavg[MIN_15], pr)
+		fmt.Printf("%2.2f, %2.2f, %2.2f, %d/%d %d\n", loadavg[MIN_1],
+			loadavg[MIN_5], loadavg[MIN_15], pr[0], pr[1], pr[2])
 
 		for i := 0; i < 100; i++ {
 			// permanently ++ the go thread pool
@@ -157,14 +160,46 @@ func TestLinuxSyscall(t *testing.T) {
 		time.Sleep(time.Second)
 	}
 
-	fmt.Println("wait...")
+	fmt.Println("TestLinuxSyscall: wait...")
 	time.Sleep(16 * time.Second)
 
-	loadavg, pr, err := LoadAvg3()
+	loadavg, pr, err := loadAvgSys()
 	if err != nil {
-		t.Fatal("LoadAvg3:", err)
+		t.Fatal("loadAvgSys:", err)
 	}
-	fmt.Printf("loadavg: %2.2f, %2.2f, %2.2f, %v\n", loadavg[MIN_1],
-		loadavg[MIN_5], loadavg[MIN_15], pr)
+	fmt.Printf("%2.2f, %2.2f, %2.2f, %d/%d %d\n", loadavg[MIN_1],
+		loadavg[MIN_5], loadavg[MIN_15], pr[0], pr[1], pr[2])
 
+}
+
+/*
+
+BenchmarkLoadAvg	 	1000000	      2214 ns/op
+BenchmarkLoadAvgSyscall	 	1000000	      2165 ns/op
+BenchmarkLoadAvgProcFile	  50000	     40244 ns/op
+
+*/
+
+func BenchmarkLoadAvg(b *t.B) {
+	for i := 0; i < b.N; i++ {
+		LoadAvg()
+	}
+}
+
+func BenchmarkLoadAvgSyscall(b *t.B) {
+	if runtime.GOOS != "linux" {
+		b.Skip("skipping linux benchmark")
+	}
+	for i := 0; i < b.N; i++ {
+		loadAvgSys()
+	}
+}
+
+func BenchmarkLoadAvgProcFile(b *t.B) {
+	if runtime.GOOS != "linux" {
+		b.Skip("skipping linux benchmark")
+	}
+	for i := 0; i < b.N; i++ {
+		loadAvgProc()
+	}
 }

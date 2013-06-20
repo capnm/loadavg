@@ -10,7 +10,7 @@ const procfile = "/proc/loadavg"
 
 var f *os.File = nil
 
-// LoadAvg2 extracts load average from the /proc/loadavg file.
+// loadAvgProc extracts load average from the /proc/loadavg file.
 //
 // The first three numbers represent the number of active tasks on the system
 //  	– processes that are actually running – averaged over the last 1, 5, and 15 minutes.
@@ -19,9 +19,9 @@ var f *os.File = nil
 //	– and the total number of processes on the system.
 // The final entry is the process ID of the process that most recently ran.
 //
-// TODO:?? thread save, cache.
+// TODO:?? thread safety, cache.
 //
-func LoadAvg2() ([3]float64, [3]int, error) {
+func loadAvgProc() ([3]float64, [3]int, error) {
 	var err error
 	if f == nil {
 		f, err = os.Open(procfile)
@@ -52,20 +52,20 @@ func LoadAvg2() ([3]float64, [3]int, error) {
 
 // LoadAvg returns the traditional 1, 5, and 15 min load averages.
 func LoadAvg() ([3]float64, error) {
-	a, _, c := LoadAvg3()
+	a, _, c := loadAvgSys()
 	return a, c
 }
 
 // Don't bother if you don't have to, the real OS
 // will clear all the Go mess at exit anyway.
-func Close() {
+func close() {
 	if f != nil {
 		f.Close()
 		f = nil
 	}
 }
 
-// LoadAvg3 extracts load average from the SYSINFO(2) syscall.
+// loadAvgSys extracts load average from the SYSINFO(2) syscall.
 //
 // The first three numbers represent the number of active tasks on the system
 //  	– processes that are actually running – averaged over the last 1, 5, and 15 minutes.
@@ -76,7 +76,7 @@ func Close() {
 //
 // TODO:?? int / 0 - runable tasks, 2 - last pid
 //
-func LoadAvg3() ([3]float64, [3]int, error) {
+func loadAvgSys() ([3]float64, [3]int, error) {
 	/*
 	   // http://man7.org/linux/man-pages/man2/sysinfo.2.html
 	   type Sysinfo_t struct {
