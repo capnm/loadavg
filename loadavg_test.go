@@ -174,9 +174,10 @@ func TestLinuxSyscall(t *t.T) {
 
 /*
 
-BenchmarkLoadAvg	 	1000000	      2214 ns/op
-BenchmarkLoadAvgSyscall	 	1000000	      2165 ns/op
-BenchmarkLoadAvgProcFile	  50000	     40244 ns/op
+BenchmarkLoadAvg			 1000000	      2307 ns/op
+BenchmarkLoadAvgSyscall			 1000000	      2254 ns/op
+BenchmarkLoadAvgProcFile		   50000	     35868 ns/op
+BenchmarkLoadAvgProcFileOpenClose	   50000	     43355 ns/op
 
 */
 
@@ -201,5 +202,14 @@ func BenchmarkLoadAvgProcFile(b *t.B) {
 	}
 	for i := 0; i < b.N; i++ {
 		loadAvgProc()
+	}
+}
+
+func BenchmarkLoadAvgProcFileOpenClose(b *t.B) {
+	if runtime.GOOS != "linux" {
+		b.Skip("skipping linux benchmark")
+	}
+	for i := 0; i < b.N; i++ {
+		loadAvgProcOpenClose()
 	}
 }

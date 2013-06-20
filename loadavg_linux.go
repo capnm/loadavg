@@ -50,6 +50,26 @@ func loadAvgProc() ([3]float64, [3]int, error) {
 	return loadavg, pr, nil
 }
 
+func loadAvgProcOpenClose() ([3]float64, [3]int, error) {
+	f, err := os.Open(procfile)
+	if err != nil {
+		return [3]float64{}, [3]int{},
+			fmt.Errorf("loadavg: unable to open procfile %q: %v", procfile, err)
+	}
+	defer f.Close()
+
+	var loadavg [3]float64
+	var pr [3]int
+
+	n, err := fmt.Fscanf(f, "%f %f %f %d/%d %d", &loadavg[0], &loadavg[1], &loadavg[2],
+		&pr[0], &pr[1], &pr[2])
+	if n != 6 || err != nil {
+		return [3]float64{}, [...]int{0, 0, 0},
+			fmt.Errorf("loadavg: unable to read loadavg: %v", err)
+	}
+	return loadavg, pr, nil
+}
+
 // LoadAvg returns the traditional 1, 5, and 15 min load averages, i.e.
 // processes that are actually running – averaged over the last 1, 5, and 15 minutes.
 func LoadAvg() ([3]float64, error) {

@@ -40,7 +40,12 @@ func LoadAvg() ([3]float64, error) {
 func loadAvgSys() ([3]float64, [3]int, error) {
 	return [3]float64{}, [3]int{}, nil
 }
+
 func loadAvgProc() ([3]float64, [3]int, error) {
+	return [3]float64{}, [3]int{}, nil
+}
+
+func loadAvgProcOpenClose() ([3]float64, [3]int, error) {
 	return [3]float64{}, [3]int{}, nil
 }
 
