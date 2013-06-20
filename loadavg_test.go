@@ -135,3 +135,36 @@ func TestProcFileRead(t *testing.T) {
 	fmt.Print(string(b))
 
 }
+
+func TestLinuxSyscall(t *testing.T) {
+	if runtime.GOOS != "linux" {
+		t.Skip("skipping linux test.")
+	}
+
+	for i := 0; i < 10; i++ {
+		loadavg, pr, err := LoadAvg3()
+		if err != nil {
+			t.Fatal("LoadAvg3:", err)
+		}
+		fmt.Printf("loadavg: %2.2f, %2.2f, %2.2f, %v\n", loadavg[MIN_1],
+			loadavg[MIN_5], loadavg[MIN_15], pr)
+
+		for i := 0; i < 100; i++ {
+			// permanently ++ the go thread pool
+			go exec.Command("sleep", "8").Run()
+		}
+		runtime.GC()
+		time.Sleep(time.Second)
+	}
+
+	fmt.Println("wait...")
+	time.Sleep(16 * time.Second)
+
+	loadavg, pr, err := LoadAvg3()
+	if err != nil {
+		t.Fatal("LoadAvg3:", err)
+	}
+	fmt.Printf("loadavg: %2.2f, %2.2f, %2.2f, %v\n", loadavg[MIN_1],
+		loadavg[MIN_5], loadavg[MIN_15], pr)
+
+}

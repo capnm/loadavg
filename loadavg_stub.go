@@ -9,7 +9,7 @@ import (
 
 // LoadAvg returns the traditional 1, 5, and 15 min load averages.
 func LoadAvg() ([3]float64, error) {
-	return [...]float64{-1, -1, -1}, fmt.Errorf("LoadAvg: unsupported platform %q", runtime.GOOS)
+	return [3]float64{}, fmt.Errorf("LoadAvg: unsupported platform %q", runtime.GOOS)
 }
 
 func LoadAvg2() ([3]float64, [3]int, error) {

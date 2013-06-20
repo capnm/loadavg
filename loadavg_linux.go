@@ -19,7 +19,7 @@ var f *os.File = nil
 //	– and the total number of processes on the system.
 // The final entry is the process ID of the process that most recently ran.
 //
-// TODO: thread save, cache.
+// TODO:?? thread save, cache.
 //
 func LoadAvg2() ([3]float64, [3]int, error) {
 	var err error
@@ -51,9 +51,8 @@ func LoadAvg2() ([3]float64, [3]int, error) {
 }
 
 // LoadAvg returns the traditional 1, 5, and 15 min load averages.
-// Not thread save.
 func LoadAvg() ([3]float64, error) {
-	a, _, c := LoadAvg2()
+	a, _, c := LoadAvg3()
 	return a, c
 }
 
@@ -112,6 +111,6 @@ func LoadAvg3() ([3]float64, [3]int, error) {
 			float64(si.Loads[1]) / scale,
 			float64(si.Loads[2]) / scale,
 		},
-		[3]int{-1, int(si.Procs), os.Getpid()}, // XXX 0 - runable tasks, 2 - last pid
+		[3]int{-1, int(si.Procs), os.Getpid()}, // XXX:?? 0 - runable tasks, 2 - last pid
 		nil
 }
