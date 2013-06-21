@@ -1,3 +1,5 @@
+// Gather loadavg for various platforms.
+
 package loadavg
 
 import (

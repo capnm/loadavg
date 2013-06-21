@@ -1,3 +1,4 @@
+// Gather loadavg for various platforms.
 package loadavg
 
 const (
